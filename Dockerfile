@@ -12,7 +12,7 @@ RUN pnpm install --frozen-lockfile
 RUN pnpm build
 
 FROM node:20-alpine AS runner
-RUN apk add --no-cache bash
+RUN apk add --no-cache bash su-exec
 WORKDIR /app
 
 RUN addgroup --system --gid 1001 nodejs
@@ -22,13 +22,15 @@ COPY --from=builder /app/public ./public
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
 
-RUN mkdir -p /app/data && chown axius:nodejs /app/data
 VOLUME /app/data
 
-USER axius
 EXPOSE 8765
 
 ENV PORT=8765
 ENV NODE_ENV=production
 
+COPY docker-entrypoint.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+
+ENTRYPOINT ["docker-entrypoint.sh"]
 CMD ["node", "server.js"]

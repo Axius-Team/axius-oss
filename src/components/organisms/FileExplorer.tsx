@@ -63,7 +63,10 @@ export function FileExplorer() {
   useEffect(() => {
     if (!loaded) {
       setLoaded(true)
-      loadPath('/')
+      fetch('/api/files/list', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ path: '/mnt/host' }) })
+        .then(r => r.json())
+        .then(j => j.success ? loadPath('/mnt/host') : loadPath('/'))
+        .catch(() => loadPath('/'))
     }
   }, [loaded, loadPath])
 
@@ -188,7 +191,12 @@ export function FileExplorer() {
         <Button variant="outline" size="icon" onClick={navigateUp}>
           <ArrowLeft className="h-4 w-4" />
         </Button>
-        <Input value={currentPath} readOnly className="font-mono text-sm min-w-0 flex-1" />
+        <Input
+          value={currentPath}
+          onChange={(e) => setCurrentPath(e.target.value)}
+          onKeyDown={(e) => { if (e.key === 'Enter' && currentPath) loadPath(currentPath) }}
+          className="font-mono text-sm min-w-0 flex-1"
+        />
         {selectedFile && !isMobile && (
           <Button variant="outline" size="icon" onClick={() => setSidebarVisible(!sidebarVisible)}>
             {sidebarVisible ? <PanelLeftClose className="h-4 w-4" /> : <PanelLeft className="h-4 w-4" />}

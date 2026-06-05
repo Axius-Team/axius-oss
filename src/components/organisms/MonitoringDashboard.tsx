@@ -6,6 +6,7 @@ import { useMetrics } from '@/src/hooks/useMetrics'
 import { formatBytes } from '@/src/lib/utils'
 import { Card, CardContent } from '@/src/components/ui/card'
 import { Cpu, MemoryStick, HardDrive, Activity } from 'lucide-react'
+import { useEffect, useState } from 'react'
 
 const Charts = dynamic(
   () => import('@/src/components/organisms/MonitoringDashboard').then(m => m.ChartsComponent),
@@ -65,6 +66,11 @@ export function ChartsComponent({ data }: { data: { timestamp: number; cpu: numb
 
 export function MonitoringDashboard() {
   const { metrics, history, error } = useMetrics()
+  const [hostname, setHostname] = useState('localhost')
+
+  useEffect(() => {
+    setHostname(window.location.hostname)
+  }, [])
 
   if (error) {
     return (
@@ -86,7 +92,7 @@ export function MonitoringDashboard() {
     <div className="space-y-6">
       <div>
         <h2 className="text-2xl font-bold">System Monitoring</h2>
-        <p className="text-muted-foreground">Real-time metrics for production.server.com</p>
+        <p className="text-muted-foreground">Real-time metrics for {hostname}</p>
       </div>
 
       <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">

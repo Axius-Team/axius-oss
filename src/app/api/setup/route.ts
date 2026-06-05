@@ -3,8 +3,6 @@ import { hashPassword } from '@/src/lib/auth/password'
 import { createUser, getUserCount } from '@/src/lib/db/users'
 import { isSetupComplete, markSetupComplete, setSetting } from '@/src/lib/db/settings'
 import { encrypt } from '@/src/lib/encryption'
-import { generateEncryptionKey } from '@/src/lib/encryption'
-import { generateJwtSecret } from '@/src/lib/utils'
 
 export async function POST(request: NextRequest) {
   try {
@@ -18,6 +16,20 @@ export async function POST(request: NextRequest) {
     if (getUserCount() > 0) {
       return NextResponse.json(
         { success: false, error: 'Users already exist' },
+        { status: 400 }
+      )
+    }
+
+    if (!process.env.ENCRYPTION_KEY) {
+      return NextResponse.json(
+        { success: false, error: 'ENCRYPTION_KEY is not set. Generate one with: openssl rand -base64 32 and add it to .env.local' },
+        { status: 400 }
+      )
+    }
+
+    if (!process.env.JWT_SECRET) {
+      return NextResponse.json(
+        { success: false, error: 'JWT_SECRET is not set. Generate one with: openssl rand -base64 64 and add it to .env.local' },
         { status: 400 }
       )
     }
@@ -37,16 +49,6 @@ export async function POST(request: NextRequest) {
         { success: false, error: 'Password must be at least 8 characters' },
         { status: 400 }
       )
-    }
-
-    if (!process.env.ENCRYPTION_KEY) {
-      const key = generateEncryptionKey()
-      process.env.ENCRYPTION_KEY = key
-    }
-
-    if (!process.env.JWT_SECRET) {
-      const secret = generateJwtSecret()
-      process.env.JWT_SECRET = secret
     }
 
     const passwordHash = await hashPassword(password)
@@ -69,7 +71,7 @@ export async function POST(request: NextRequest) {
     markSetupComplete()
 
     return NextResponse.json({ success: true })
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       { success: false, error: 'Internal server error' },
       { status: 500 }
