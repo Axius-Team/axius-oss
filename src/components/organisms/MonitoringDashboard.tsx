@@ -24,15 +24,15 @@ export function ChartsComponent({ data }: { data: { timestamp: number; cpu: numb
         <p className="text-xs text-muted-foreground mb-4">CPU and Memory usage trends</p>
         <ResponsiveContainer width="100%" height={250}>
           <ComposedChart data={data}>
-            <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-            <XAxis dataKey="timestamp" tickFormatter={(v: number) => new Date(v).toLocaleTimeString()} tick={{ fontSize: 11, fill: 'hsl(var(--muted-foreground))' }} />
-            <YAxis domain={[0, 100]} tick={{ fontSize: 11, fill: 'hsl(var(--muted-foreground))' }} />
+            <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
+            <XAxis dataKey="timestamp" tickFormatter={(v: number) => new Date(v).toLocaleTimeString()} tick={{ fontSize: 11, fill: 'var(--muted-foreground)' }} />
+            <YAxis domain={[0, 100]} tick={{ fontSize: 11, fill: 'var(--muted-foreground)' }} />
             <Tooltip
-              contentStyle={{ background: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', borderRadius: '6px', fontSize: '12px' }}
+              contentStyle={{ background: 'var(--card)', border: '1px solid var(--border)', borderRadius: '6px', fontSize: '12px' }}
               labelFormatter={(v: number) => new Date(v).toLocaleTimeString()}
               formatter={(v: number, name: string) => [`${v.toFixed(1)}%`, name === 'cpu' ? 'CPU' : 'Memory']}
             />
-            <Area type="monotone" dataKey="cpu" stroke="hsl(var(--foreground))" fill="hsl(var(--foreground))" fillOpacity={0.1} strokeWidth={1.5} dot={false} name="cpu" />
+            <Area type="monotone" dataKey="cpu" stroke="var(--foreground)" fill="var(--foreground)" fillOpacity={0.1} strokeWidth={1.5} dot={false} name="cpu" />
             <Line type="monotone" dataKey="memory" stroke="#ef4444" strokeWidth={1.5} dot={false} name="memory" />
           </ComposedChart>
         </ResponsiveContainer>
@@ -43,18 +43,18 @@ export function ChartsComponent({ data }: { data: { timestamp: number; cpu: numb
         <p className="text-xs text-muted-foreground mb-4">Data transfer rates</p>
         <ResponsiveContainer width="100%" height={250}>
           <ComposedChart data={data}>
-            <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-            <XAxis dataKey="timestamp" tickFormatter={(v: number) => new Date(v).toLocaleTimeString()} tick={{ fontSize: 11, fill: 'hsl(var(--muted-foreground))' }} />
-            <YAxis tick={{ fontSize: 11, fill: 'hsl(var(--muted-foreground))' }} />
+            <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
+            <XAxis dataKey="timestamp" tickFormatter={(v: number) => new Date(v).toLocaleTimeString()} tick={{ fontSize: 11, fill: 'var(--muted-foreground)' }} />
+            <YAxis tick={{ fontSize: 11, fill: 'var(--muted-foreground)' }} />
             <Tooltip
-              contentStyle={{ background: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', borderRadius: '6px', fontSize: '12px' }}
+              contentStyle={{ background: 'var(--card)', border: '1px solid var(--border)', borderRadius: '6px', fontSize: '12px' }}
               labelFormatter={(v: number) => new Date(v).toLocaleTimeString()}
               formatter={(v: number, name: string) => {
                 const val = name === 'networkIn' ? `${(v / 1024 / 1024).toFixed(1)} MB/s` : `${(v / 1024 / 1024).toFixed(1)} MB/s`
                 return [val, name === 'networkIn' ? 'Download' : 'Upload']
               }}
             />
-            <Area type="monotone" dataKey="networkIn" stroke="hsl(var(--foreground))" fill="hsl(var(--foreground))" fillOpacity={0.1} strokeWidth={1.5} dot={false} name="networkIn" />
+            <Area type="monotone" dataKey="networkIn" stroke="var(--foreground)" fill="var(--foreground)" fillOpacity={0.1} strokeWidth={1.5} dot={false} name="networkIn" />
             <Line type="monotone" dataKey="networkOut" stroke="#3b82f6" strokeWidth={1.5} dot={false} name="networkOut" />
           </ComposedChart>
         </ResponsiveContainer>

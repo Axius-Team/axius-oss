@@ -47,13 +47,13 @@ export function Sidebar({ theme, onThemeToggle, isOpen, onClose, collapsed, onTo
 
       <aside
         className={cn(
-          'fixed md:static inset-y-0 left-0 z-50 bg-sidebar border-r border-sidebar-border transform transition-all duration-200 md:transform-none',
+          'fixed md:static inset-y-0 left-0 z-50 bg-sidebar transform transition-all duration-200 md:transform-none',
           isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0',
           collapsed ? 'w-16' : 'w-64'
         )}
       >
         <div className="flex h-full flex-col">
-          <div className={cn('flex items-center border-b border-sidebar-border', collapsed ? 'justify-center p-3' : 'gap-3 p-4')}>
+          <div className={cn('flex items-center', collapsed ? 'justify-center p-3' : 'gap-3 p-4')}>
             <Image
               src={theme === 'dark' ? '/images/axius-icon-white.png' : '/images/axius-icon-black.png'}
               alt="Axius"
@@ -93,7 +93,7 @@ export function Sidebar({ theme, onThemeToggle, isOpen, onClose, collapsed, onTo
             )}
           </nav>
 
-          <div className={cn('border-t border-sidebar-border', collapsed ? 'p-2 flex flex-col items-center gap-2' : 'p-3 flex items-center justify-between')}>
+          <div className={cn(collapsed ? 'p-2 flex flex-col items-center gap-2' : 'p-3 flex items-center justify-between')}>
             <ThemeToggle theme={theme} onToggle={onThemeToggle} />
             <Button variant="ghost" size="icon" onClick={onToggleCollapse} title={collapsed ? 'Expand' : 'Collapse'}>
               {collapsed ? <ChevronRight className="h-4 w-4" /> : <PanelLeftClose className="h-4 w-4" />}

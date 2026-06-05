@@ -6,7 +6,8 @@ import { LoadingSpinner } from '@/src/components/atoms/LoadingSpinner'
 import { Button } from '@/src/components/ui/button'
 import { Input } from '@/src/components/ui/input'
 import { ScrollArea } from '@/src/components/ui/scroll-area'
-import { ArrowLeft, Save, FileCode, PanelLeftClose, PanelLeft } from 'lucide-react'
+import { ArrowLeft, Save, PanelLeftClose, PanelLeft } from 'lucide-react'
+import { useMobile } from '@/src/hooks/useMobile'
 import { toast } from '@/src/hooks/use-toast'
 
 interface FileItem {
@@ -25,7 +26,9 @@ export function FileExplorer() {
   const [editorContent, setEditorContent] = useState('')
   const [highlighted, setHighlighted] = useState('')
   const [dirty, setDirty] = useState(false)
+  const isMobile = useMobile()
   const [sidebarVisible, setSidebarVisible] = useState(true)
+  const showSidebar = !selectedFile || (sidebarVisible && !(isMobile && selectedFile))
   const [saving, setSaving] = useState(false)
   const [loaded, setLoaded] = useState(false)
   const scrollRef = useRef<HTMLDivElement>(null)
@@ -185,8 +188,8 @@ export function FileExplorer() {
         <Button variant="outline" size="icon" onClick={navigateUp}>
           <ArrowLeft className="h-4 w-4" />
         </Button>
-        <Input value={currentPath} readOnly className="font-mono text-sm" />
-        {selectedFile && (
+        <Input value={currentPath} readOnly className="font-mono text-sm min-w-0 flex-1" />
+        {selectedFile && !isMobile && (
           <Button variant="outline" size="icon" onClick={() => setSidebarVisible(!sidebarVisible)}>
             {sidebarVisible ? <PanelLeftClose className="h-4 w-4" /> : <PanelLeft className="h-4 w-4" />}
           </Button>
@@ -194,8 +197,8 @@ export function FileExplorer() {
       </div>
 
       <div className="flex-1 flex gap-4 min-h-0">
-        {(!selectedFile || sidebarVisible) && (
-          <div className={`rounded-lg border ${selectedFile ? 'w-72 shrink-0' : 'w-full'} flex flex-col`}>
+        {showSidebar && (
+          <div className={`rounded-lg border ${selectedFile && !isMobile ? 'w-72 shrink-0' : 'w-full'} flex flex-col`}>
             <div className="p-2 border-b bg-muted/50 shrink-0">
               <span className="text-xs font-medium text-muted-foreground">EXPLORER</span>
             </div>
@@ -222,13 +225,18 @@ export function FileExplorer() {
         )}
 
         {selectedFile && (
-          <div className="flex-1 rounded-lg border flex flex-col min-w-0">
-            <div className="p-2 border-b bg-muted/50 flex items-center justify-between shrink-0">
-              <span className="text-xs font-medium text-muted-foreground">
+          <div className="flex-1 rounded-lg border flex flex-col min-w-0 max-w-full">
+            <div className="p-2 border-b bg-muted/50 flex items-center gap-2 shrink-0">
+              {isMobile && (
+                <button onClick={() => setSelectedFile(null)} className="text-muted-foreground hover:text-foreground p-1">
+                  <ArrowLeft className="h-4 w-4" />
+                </button>
+              )}
+              <span className="text-xs font-medium text-muted-foreground flex-1">
                 {selectedFile.split('/').pop()}
                 {dirty && <span className="ml-1 text-yellow-500">* unsaved</span>}
               </span>
-              <span className="text-xs text-muted-foreground">Ctrl+S to save</span>
+              <span className="text-xs text-muted-foreground">{isMobile ? '' : 'Ctrl+S to save'}</span>
             </div>
             <div className="flex-1 relative bg-muted/30 overflow-hidden">
               <div
@@ -239,7 +247,7 @@ export function FileExplorer() {
                 <div className="p-4 text-sm font-mono pointer-events-none select-none" style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>
                   {highlighted ? (
                     <style>{`
-                      .hljs { color: hsl(var(--foreground)); background: transparent; }
+                      .hljs { color: var(--foreground); background: transparent; }
                       .hljs-keyword, .hljs-literal, .hljs-symbol { color: #c586c0; }
                       .hljs-string, .hljs-doctag { color: #ce9178; }
                       .hljs-number, .hljs-boolean { color: #b5cea8; }

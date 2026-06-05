@@ -29,11 +29,31 @@ export function formatDate(unix: number): string {
 }
 
 export function sanitizeCss(css: string): string {
-  let sanitized = css.replace(/<script[\s\S]*?<\/script>/gi, '')
-  sanitized = sanitized.replace(/javascript:/gi, '')
-  sanitized = sanitized.replace(/url\((?!['"]?(?:data:|https:))[^)]+\)/gi, '')
-  sanitized = sanitized.slice(0, 32768)
-  return sanitized
+  let s = css
+  s = s.replace(/<script[\s\S]*?<\/script>/gi, '')
+  s = s.replace(/javascript:/gi, '')
+  s = s.replace(/url\((?!['"]?(?:data:|https:))[^)]+\)/gi, '')
+  s = s.replace(/@import\s+[^;]+;/gi, '')
+  s = s.replace(/@tailwind\s+[^;]+;/gi, '')
+  s = s.replace(/@custom-variant\s+[^{]+/gi, '')
+  s = s.replace(/@theme\s+inline\s*\{[\s\S]*?\}/gi, '')
+  s = s.replace(/@apply\s+[^;]+;/gi, '')
+  s = s.replace(/@layer\s+\w+\s*\{/gi, '')
+  const opens = (s.match(/\{/g) || []).length
+  const closes = (s.match(/\}/g) || []).length
+  const extra = closes - opens
+  for (let i = 0; i < extra; i++) {
+    s = s.replace(/\}\s*$/, '')
+  }
+  s = s.replace(/--font-sans[^;]+;/gi, '')
+  s = s.replace(/--font-serif[^;]+;/gi, '')
+  s = s.replace(/--font-mono[^;]+;/gi, '')
+  s = s.replace(/--shadow-[^;]+;/gi, '')
+  s = s.replace(/--tracking-[^;]+;/gi, '')
+  s = s.replace(/--spacing[^;]+;/gi, '')
+  s = s.trim()
+  s = s.slice(0, 32768)
+  return s
 }
 
 export function generateJwtSecret(): string {
