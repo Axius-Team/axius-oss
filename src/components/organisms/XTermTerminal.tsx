@@ -7,19 +7,27 @@ interface XTermTerminalProps {
 }
 
 const POLL_INTERVAL = 100
-const ROWS = 24
-const COLS = 80
 
 export function XTermTerminal({ sessionId }: XTermTerminalProps) {
   const terminalRef = useRef<HTMLDivElement>(null)
   const termRef = useRef<any>(null)
+  const fitAddonRef = useRef<any>(null)
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null)
+  const resizeRef = useRef<(() => void) | null>(null)
+
+  const sendResize = useCallback(async (cols: number, rows: number) => {
+    await fetch('/api/terminal', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'resize', sessionId, cols, rows }),
+    })
+  }, [sessionId])
 
   const connect = useCallback(async () => {
     const res = await fetch('/api/terminal', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: 'connect', sessionId, rows: ROWS, cols: COLS }),
+      body: JSON.stringify({ action: 'connect', sessionId, rows: 40, cols: 120 }),
     })
     return res.json()
   }, [sessionId])
@@ -44,14 +52,13 @@ export function XTermTerminal({ sessionId }: XTermTerminalProps) {
         termRef.current.write(json.data.output)
       }
     } catch {
-      if (pollRef.current) {
-        clearInterval(pollRef.current)
-      }
+      if (pollRef.current) clearInterval(pollRef.current)
     }
   }, [sessionId])
 
   useEffect(() => {
     let mounted = true
+    let resizeHandler: (() => void) | null = null
 
     const init = async () => {
       const result = await connect()
@@ -63,30 +70,54 @@ export function XTermTerminal({ sessionId }: XTermTerminalProps) {
       const { Terminal } = await import('@xterm/xterm')
       const { FitAddon } = await import('@xterm/addon-fit')
 
+      const fitAddon = new FitAddon()
+      fitAddonRef.current = fitAddon
+
       const term = new Terminal({
-        rows: ROWS,
-        cols: COLS,
         cursorBlink: true,
+        allowTransparency: true,
         theme: {
-          background: '#0a0a0a',
+          background: 'transparent',
           foreground: '#e5e5e5',
-          cursor: '#22c55e',
-          selectionBackground: '#22c55e40',
+          cursor: '#e5e5e5',
+          selectionBackground: '#e5e5e540',
         },
       })
 
-      const fitAddon = new FitAddon()
       term.loadAddon(fitAddon)
-
       term.open(termEl)
-      fitAddon.fit()
 
-      term.onData((data: string) => {
-        sendInput(data)
+      requestAnimationFrame(() => {
+        if (fitAddon && termEl) {
+          fitAddon.fit()
+          const dims = fitAddon.proposeDimensions()
+          if (dims) sendResize(dims.cols, dims.rows)
+        }
       })
+
+      const handleResize = () => {
+        if (fitAddon && term) {
+          fitAddon.fit()
+          const dims = fitAddon.proposeDimensions()
+          if (dims) sendResize(dims.cols, dims.rows)
+        }
+      }
+
+      resizeHandler = handleResize
+      window.addEventListener('resize', handleResize)
+
+      term.onData((data: string) => sendInput(data))
 
       termRef.current = term
       pollRef.current = setInterval(pollOutput, POLL_INTERVAL)
+
+      setTimeout(() => {
+        if (fitAddon) {
+          fitAddon.fit()
+          const dims = fitAddon.proposeDimensions()
+          if (dims) sendResize(dims.cols, dims.rows)
+        }
+      }, 100)
 
       term.focus()
     }
@@ -95,15 +126,14 @@ export function XTermTerminal({ sessionId }: XTermTerminalProps) {
 
     return () => {
       mounted = false
-      if (pollRef.current) {
-        clearInterval(pollRef.current)
-      }
+      if (resizeHandler) window.removeEventListener('resize', resizeHandler)
+      if (pollRef.current) clearInterval(pollRef.current)
       if (termRef.current) {
         termRef.current.dispose()
         termRef.current = null
       }
     }
-  }, [connect, sendInput, pollOutput])
+  }, [connect, sendInput, pollOutput, sendResize])
 
   return <div ref={terminalRef} className="h-full w-full" />
 }

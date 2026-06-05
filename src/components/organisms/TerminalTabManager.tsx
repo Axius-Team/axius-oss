@@ -60,11 +60,11 @@ export function TerminalTabManager() {
         </Button>
       </div>
 
-      <div className="flex-1">
+      <div className="flex-1 overflow-hidden">
         {tabs.map((tab) => (
           <div
             key={tab.id}
-            className={`h-full ${activeTab === tab.id ? 'block' : 'hidden'}`}
+            className={`h-full overflow-hidden ${activeTab === tab.id ? 'block' : 'hidden'}`}
           >
             <XTermTerminal sessionId={tab.id} />
           </div>
