@@ -53,6 +53,22 @@ There are no cloud dependencies, no third-party services, and no data leaving yo
 
 ---
 
+## Screenshots
+
+**System monitoring** — real-time CPU, memory, storage, and network charts.
+
+<img width="1872" height="1014" alt="image" src="https://github.com/user-attachments/assets/fb1214aa-85ae-4957-b47b-2878df9416ad" /> 
+
+**File explorer** — browse the host filesystem with syntax-highlighted editing.
+
+<img width="1868" height="1015" alt="image" src="https://github.com/user-attachments/assets/97392419-c3c5-463a-9d60-e28e55b8abd7" />
+
+**Email notifications** — configure SMTP and receive alerts when a container stops.
+<img width="1852" height="1021" alt="image" src="https://github.com/user-attachments/assets/b37a865a-36cc-4a8c-9ad5-17744314ce02" />
+
+
+---
+
 ## Prerequisites
 
 - Docker and Docker Compose
