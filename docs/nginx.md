@@ -1,6 +1,10 @@
-# Nginx Reverse Proxy Configuration
+# Nginx Reverse Proxy
 
-```
+Replace `axius.example.com` with your actual domain throughout.
+
+## HTTP
+
+```nginx
 server {
     listen 80;
     server_name axius.example.com;
@@ -15,7 +19,6 @@ server {
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto $scheme;
         proxy_cache_bypass $http_upgrade;
-
         proxy_set_header Origin http://$host;
     }
 
@@ -31,6 +34,16 @@ server {
         proxy_cache_bypass $http_upgrade;
         proxy_read_timeout 86400;
     }
+}
+```
+
+## HTTPS with Let's Encrypt
+
+```nginx
+server {
+    listen 80;
+    server_name axius.example.com;
+    return 301 https://$host$request_uri;
 }
 
 server {
@@ -66,3 +79,7 @@ server {
     }
 }
 ```
+
+## Note
+
+> Do not expose Axius OSS to untrusted networks without additional access controls. The admin account has full access to your terminal, files, and Docker daemon. Consider restricting access by IP, adding HTTP basic auth at the Nginx level, or placing the instance behind a VPN.
