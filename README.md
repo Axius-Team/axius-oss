@@ -57,15 +57,15 @@ There are no cloud dependencies, no third-party services, and no data leaving yo
 
 **System monitoring** — real-time CPU, memory, storage, and network charts.
 
-<img width="1872" height="1014" alt="image" src="https://github.com/user-attachments/assets/fb1214aa-85ae-4957-b47b-2878df9416ad" /> 
+<img width="1872" height="1014" alt="image" src="https://github.com/user-attachments/assets/fb1214aa-85ae-4957-b47b-2878df9416ad" />
 
 **File explorer** — browse the host filesystem with syntax-highlighted editing.
 
 <img width="1868" height="1015" alt="image" src="https://github.com/user-attachments/assets/97392419-c3c5-463a-9d60-e28e55b8abd7" />
 
 **Email notifications** — configure SMTP and receive alerts when a container stops.
-<img width="1852" height="1021" alt="image" src="https://github.com/user-attachments/assets/b37a865a-36cc-4a8c-9ad5-17744314ce02" />
 
+<img width="1852" height="1021" alt="image" src="https://github.com/user-attachments/assets/b37a865a-36cc-4a8c-9ad5-17744314ce02" />
 
 ---
 
@@ -223,3 +223,15 @@ This is explicit and intentional:
 ## License
 
 MIT — see [LICENSE](LICENSE) for details.
+
+---
+
+<table border="0" width="100%">
+  <tr>
+    <td align="center" style="padding: 32px 0 16px 0;">
+      <img width="40" height="40" alt="axius-ico" src="https://github.com/user-attachments/assets/f1917052-9911-42d2-934c-70235a062767" />
+      <h3>Need more?</h3>
+      <p>Axius OSS is free and always will be. For multi-server management and more, see <strong><a href="https://axius.pro">Axius Pro</a></strong>.</p>
+    </td>
+  </tr>
+</table>
