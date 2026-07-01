@@ -222,7 +222,7 @@ This is explicit and intentional:
 
 ## License
 
-MIT — see [LICENSE](LICENSE) for details.
+CC-BY-NC-4.0 — see [LICENSE](LICENSE) for details.
 
 ---
 
