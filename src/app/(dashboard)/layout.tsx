@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { DashboardShell } from '@/src/components/templates/DashboardShell'
 import { LoadingSpinner } from '@/src/components/atoms/LoadingSpinner'
+import { ThemeProvider } from '@/src/components/atoms/ThemeProvider'
 
 export default function DashboardLayout({
   children,
@@ -63,7 +64,9 @@ export default function DashboardLayout({
 
   return (
     <DashboardShell theme={theme} onThemeToggle={handleThemeToggle}>
-      {children}
+      <ThemeProvider>
+        {children}
+      </ThemeProvider>
     </DashboardShell>
   )
 }

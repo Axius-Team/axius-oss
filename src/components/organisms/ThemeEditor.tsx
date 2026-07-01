@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import { Textarea } from '@/src/components/ui/textarea'
 import { Button } from '@/src/components/ui/button'
 import { Label } from '@/src/components/ui/label'
@@ -9,10 +9,18 @@ import { sanitizeCss } from '@/src/lib/utils'
 
 const MAX_CSS_SIZE = 32768
 
+function analyzeBlockCoverage(css: string): { hasRoot: boolean; hasDark: boolean; hasLight: boolean } {
+  return {
+    hasRoot: /(?:^|\s):root\s*\{/.test(css),
+    hasDark: /(?:^|\s)\.dark\s*\{/.test(css),
+    hasLight: /(?:^|\s)\.light\s*\{/.test(css),
+  }
+}
+
 export function ThemeEditor() {
   const [css, setCss] = useState('')
   const [error, setError] = useState<string | null>(null)
-  const styleRef = useRef<HTMLStyleElement | null>(null)
+  const [warning, setWarning] = useState<string | null>(null)
 
   useEffect(() => {
     fetch('/api/theme')
@@ -27,6 +35,7 @@ export function ThemeEditor() {
 
   const handleSave = async () => {
     setError(null)
+    setWarning(null)
 
     if (css.length > MAX_CSS_SIZE) {
       setError(`CSS exceeds maximum size of ${MAX_CSS_SIZE / 1024} KB`)
@@ -39,15 +48,32 @@ export function ThemeEditor() {
     }
 
     const sanitized = sanitizeCss(css)
-    const styleTag = document.getElementById('axius-custom-theme')
+
+    const coverage = analyzeBlockCoverage(sanitized)
+    if (!coverage.hasRoot && !coverage.hasLight && coverage.hasDark) {
+      setWarning(
+        'This theme only defines dark mode colors (.dark block). ' +
+        'Light mode will use the default color palette. ' +
+        'To fully customize both modes, export a complete theme from tweakcn.com ' +
+        'that includes both :root (light) and .dark (dark) blocks.'
+      )
+    } else if (!coverage.hasDark && !coverage.hasLight && coverage.hasRoot) {
+      setWarning(
+        'This theme only defines light mode colors (:root block). ' +
+        'Dark mode will use the default color palette. ' +
+        'To fully customize both modes, export a complete theme from tweakcn.com ' +
+        'that includes both :root (light) and .dark (dark) blocks.'
+      )
+    }
+
+    let styleTag = document.getElementById('axius-custom-theme') as HTMLStyleElement | null
     if (styleTag) {
       styleTag.innerHTML = sanitized
     } else {
-      const style = document.createElement('style')
-      style.id = 'axius-custom-theme'
-      style.innerHTML = sanitized
-      document.head.appendChild(style)
-      styleRef.current = style
+      styleTag = document.createElement('style')
+      styleTag.id = 'axius-custom-theme'
+      styleTag.innerHTML = sanitized
+      document.head.appendChild(styleTag)
     }
 
     const res = await fetch('/api/theme', {
@@ -67,6 +93,7 @@ export function ThemeEditor() {
   const handleReset = async () => {
     setCss('')
     setError(null)
+    setWarning(null)
     const res = await fetch('/api/theme', {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
@@ -86,18 +113,24 @@ export function ThemeEditor() {
         <Label>Custom Theme CSS</Label>
         <p className="text-sm text-muted-foreground mt-1">
           Paste a CSS snippet from tweakcn.com to customize the theme.
+          The snippet should include both <code>:root</code> (light mode) and
+          {' '}<code>.dark</code> (dark mode) blocks for full coverage.
         </p>
       </div>
 
       <Textarea
         value={css}
-        onChange={(e) => { setCss(e.target.value); setError(null) }}
-        placeholder=":root { --background: 0 0% 7%; ... }"
+        onChange={(e) => { setCss(e.target.value); setError(null); setWarning(null) }}
+        placeholder=":root { --background: 0 0% 100%; ... } .dark { --background: 0 0% 7%; ... }"
         className="font-mono text-sm min-h-[200px]"
       />
 
       {error && (
         <p className="text-sm text-destructive">{error}</p>
+      )}
+
+      {warning && (
+        <p className="text-sm text-yellow-600 dark:text-yellow-400">{warning}</p>
       )}
 
       <div className="flex gap-2">

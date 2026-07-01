@@ -35,7 +35,7 @@ export function sanitizeCss(css: string): string {
   s = s.replace(/url\((?!['"]?(?:data:|https:))[^)]+\)/gi, '')
   s = s.replace(/@import\s+[^;]+;/gi, '')
   s = s.replace(/@tailwind\s+[^;]+;/gi, '')
-  s = s.replace(/@custom-variant\s+[^{]+/gi, '')
+  s = s.replace(/@custom-variant\s+[^;]+;/gi, '')
   s = s.replace(/@theme\s+inline\s*\{[\s\S]*?\}/gi, '')
   s = s.replace(/@apply\s+[^;]+;/gi, '')
   s = s.replace(/@layer\s+\w+\s*\{/gi, '')

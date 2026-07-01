@@ -30,7 +30,7 @@ export default function RootLayout({
     <html lang="en" className={themeMode === 'light' ? 'light' : 'dark'} suppressHydrationWarning>
       <body className={`${inter.className} antialiased`}>
         {sanitized && (
-          <style id="axius-custom-theme" dangerouslySetInnerHTML={{ __html: sanitized }} />
+          <style id="axius-custom-theme">{sanitized}</style>
         )}
         {children}
       </body>
