@@ -3,7 +3,7 @@
 import { usePathname } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
-import { Activity, Container, FileCode, Terminal, Settings, X, PanelLeftClose, ChevronRight } from 'lucide-react'
+import { Activity, Container, FileCode, Terminal, Settings, X, PanelLeftClose, ChevronRight, FolderOpen } from 'lucide-react'
 import { NavItem } from '@/src/components/molecules/NavItem'
 import { ThemeToggle } from '@/src/components/atoms/ThemeToggle'
 import { Button } from '@/src/components/ui/button'
@@ -78,7 +78,7 @@ export function Sidebar({ theme, onThemeToggle, isOpen, onClose, collapsed, onTo
               <>
                 <NavIcon href="/monitoring" icon={<Activity className="h-5 w-5" />} label="Monitoring" onClick={onClose} />
                 <NavIcon href="/docker" icon={<Container className="h-5 w-5" />} label="Docker" onClick={onClose} />
-                <NavIcon href="/files" icon={<FileCode className="h-5 w-5" />} label="File Explorer" onClick={onClose} />
+                <NavIcon href="/files" icon={<FolderOpen className="h-5 w-5" />} label="File Explorer" onClick={onClose} />
                 <NavIcon href="/terminal" icon={<Terminal className="h-5 w-5" />} label="Terminal" onClick={onClose} />
                 <NavIcon href="/settings" icon={<Settings className="h-5 w-5" />} label="Settings" onClick={onClose} />
               </>
@@ -86,7 +86,7 @@ export function Sidebar({ theme, onThemeToggle, isOpen, onClose, collapsed, onTo
               <>
                 <NavItem href="/monitoring" label="Monitoring" icon={<Activity className="h-5 w-5" />} onClick={onClose} />
                 <NavItem href="/docker" label="Docker" icon={<Container className="h-5 w-5" />} onClick={onClose} />
-                <NavItem href="/files" label="File Explorer" icon={<FileCode className="h-5 w-5" />} onClick={onClose} />
+                <NavItem href="/files" label="File Explorer" icon={<FolderOpen className="h-5 w-5" />} onClick={onClose} />
                 <NavItem href="/terminal" label="Terminal" icon={<Terminal className="h-5 w-5" />} onClick={onClose} />
                 <NavItem href="/settings" label="Settings" icon={<Settings className="h-5 w-5" />} onClick={onClose} />
               </>
