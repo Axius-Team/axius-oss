@@ -51,8 +51,8 @@ export function ChartsComponent({ data }: { data: { timestamp: number; cpu: numb
               contentStyle={{ background: 'var(--card)', border: '1px solid var(--border)', borderRadius: '6px', fontSize: '12px' }}
               labelFormatter={(v: number) => new Date(v).toLocaleTimeString()}
               formatter={(v: number, name: string) => {
-                const val = name === 'networkIn' ? `${(v / 1024 / 1024).toFixed(1)} MB/s` : `${(v / 1024 / 1024).toFixed(1)} MB/s`
-                return [val, name === 'networkIn' ? 'Download' : 'Upload']
+                const label = name === 'networkIn' ? 'Download' : 'Upload'
+                return [`${formatBytes(v)}/s`, label]
               }}
             />
             <Area type="monotone" dataKey="networkIn" stroke="var(--foreground)" fill="var(--foreground)" fillOpacity={0.1} strokeWidth={1.5} dot={false} name="networkIn" />

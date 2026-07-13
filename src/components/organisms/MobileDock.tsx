@@ -1,6 +1,6 @@
 'use client'
 
-import { Activity, Container, FileCode, Terminal, Settings } from 'lucide-react'
+import { Activity, Container, FolderOpen, Terminal, Settings } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { cn } from '@/src/lib/utils'
@@ -8,7 +8,7 @@ import { cn } from '@/src/lib/utils'
 const dockItems = [
   { href: '/monitoring', label: 'Monitor', icon: Activity },
   { href: '/docker', label: 'Docker', icon: Container },
-  { href: '/files', label: 'Files', icon: FileCode },
+  { href: '/files', label: 'Files', icon: FolderOpen },
   { href: '/terminal', label: 'Terminal', icon: Terminal },
   { href: '/settings', label: 'Settings', icon: Settings },
 ]

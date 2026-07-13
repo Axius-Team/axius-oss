@@ -19,6 +19,8 @@ export async function GET() {
       ? (cpu.cpus as any[]).reduce((sum: number, c: any) => sum + (c.temp || 0), 0) / cpu.cpus.length
       : null
 
+    const mainDisk = disk.find(d => d.mount === '/') || disk[0]
+
     return NextResponse.json({
       success: true,
       data: {
@@ -33,8 +35,8 @@ export async function GET() {
           swap: mem.swapused || 0,
         },
         storage: {
-          used: disk[0]?.used || 0,
-          total: disk[0]?.size || 0,
+          used: mainDisk?.used || 0,
+          total: mainDisk?.size || 0,
         },
         network: {
           inbound: networkIn,
