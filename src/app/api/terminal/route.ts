@@ -59,9 +59,8 @@ export async function POST(request: NextRequest) {
             { status: 429 }
           )
         }
-        const pty = require('node-pty')
         const shell = process.env.SHELL || '/bin/bash'
-        const term = pty.spawn(shell, [], {
+        const term = require('node-pty').spawn(shell, [], {
           name: 'xterm-color',
           cols: cols || 80,
           rows: rows || 24,

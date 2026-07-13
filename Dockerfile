@@ -10,6 +10,7 @@ COPY public/ public/
 
 RUN pnpm install --frozen-lockfile
 RUN pnpm build
+RUN pnpm add -D esbuild && pnpm build:ws
 
 FROM node:20-alpine AS runner
 RUN apk add --no-cache bash su-exec
@@ -21,10 +22,11 @@ RUN adduser --system --uid 1001 axius
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
+COPY --from=builder /app/dist ./dist
 
 VOLUME /app/data
 
-EXPOSE 8765
+EXPOSE 8765 8766
 
 ENV PORT=8765
 ENV NODE_ENV=production

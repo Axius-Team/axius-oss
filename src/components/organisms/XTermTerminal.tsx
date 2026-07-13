@@ -1,139 +1,125 @@
 'use client'
 
-import { useEffect, useRef, useCallback } from 'react'
+import { useEffect, useRef } from 'react'
+import { getWsUrl } from '@/src/lib/terminal/ws-url'
+import '@xterm/xterm/css/xterm.css'
 
 interface XTermTerminalProps {
   sessionId: string
 }
 
-const POLL_INTERVAL = 100
-
 export function XTermTerminal({ sessionId }: XTermTerminalProps) {
   const terminalRef = useRef<HTMLDivElement>(null)
   const termRef = useRef<any>(null)
   const fitAddonRef = useRef<any>(null)
-  const pollRef = useRef<ReturnType<typeof setInterval> | null>(null)
-  const resizeRef = useRef<(() => void) | null>(null)
-
-  const sendResize = useCallback(async (cols: number, rows: number) => {
-    await fetch('/api/terminal', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: 'resize', sessionId, cols, rows }),
-    })
-  }, [sessionId])
-
-  const connect = useCallback(async () => {
-    const res = await fetch('/api/terminal', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: 'connect', sessionId, rows: 40, cols: 120 }),
-    })
-    return res.json()
-  }, [sessionId])
-
-  const sendInput = useCallback(async (data: string) => {
-    await fetch('/api/terminal', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: 'input', sessionId, data }),
-    })
-  }, [sessionId])
-
-  const pollOutput = useCallback(async () => {
-    try {
-      const res = await fetch('/api/terminal', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'poll', sessionId }),
-      })
-      const json = await res.json()
-      if (json.success && json.data?.output && termRef.current) {
-        termRef.current.write(json.data.output)
-      }
-    } catch {
-      if (pollRef.current) clearInterval(pollRef.current)
-    }
-  }, [sessionId])
+  const wsRef = useRef<WebSocket | null>(null)
 
   useEffect(() => {
     let mounted = true
     let resizeHandler: (() => void) | null = null
+    let ws: WebSocket | null = null
+    const termEl = terminalRef.current
+    if (!termEl) return
 
     const init = async () => {
-      const result = await connect()
-      if (!result.success || !mounted) return
+      const url = await getWsUrl()
+      if (!mounted) return
 
-      const termEl = terminalRef.current
-      if (!termEl) return
+      ws = new WebSocket(url)
+      wsRef.current = ws
 
-      const { Terminal } = await import('@xterm/xterm')
-      const { FitAddon } = await import('@xterm/addon-fit')
+      ws.onopen = async () => {
+        if (!mounted) return
 
-      const fitAddon = new FitAddon()
-      fitAddonRef.current = fitAddon
+        const { Terminal } = await import('@xterm/xterm')
+        const { FitAddon } = await import('@xterm/addon-fit')
 
-      const term = new Terminal({
-        cursorBlink: true,
-        allowTransparency: true,
-        theme: {
-          background: 'transparent',
-          foreground: '#e5e5e5',
-          cursor: '#e5e5e5',
-          selectionBackground: '#e5e5e540',
-        },
-      })
+        const fitAddon = new FitAddon()
+        fitAddonRef.current = fitAddon
 
-      term.loadAddon(fitAddon)
-      term.open(termEl)
+        const style = getComputedStyle(document.documentElement)
+        const fg = style.getPropertyValue('--foreground').trim() || '#e5e5e5'
+        const cursorColor = style.getPropertyValue('--foreground').trim() || '#e5e5e5'
 
-      requestAnimationFrame(() => {
-        if (fitAddon && termEl) {
-          fitAddon.fit()
-          const dims = fitAddon.proposeDimensions()
-          if (dims) sendResize(dims.cols, dims.rows)
+        const term = new Terminal({
+          cursorBlink: true,
+          allowTransparency: true,
+          theme: {
+            background: 'transparent',
+            foreground: fg,
+            cursor: cursorColor,
+            selectionBackground: fg ? `${fg}40` : '#e5e5e540',
+          },
+        })
+
+        term.loadAddon(fitAddon)
+        term.open(termEl)
+        termRef.current = term
+
+        const sendResize = () => {
+          if (fitAddon && termEl) {
+            fitAddon.fit()
+            const dims = fitAddon.proposeDimensions()
+            if (dims && ws && ws.readyState === ws.OPEN) {
+              ws.send(
+                JSON.stringify({
+                  action: 'resize',
+                  cols: dims.cols,
+                  rows: dims.rows,
+                })
+              )
+            }
+          }
         }
-      })
 
-      const handleResize = () => {
-        if (fitAddon && term) {
-          fitAddon.fit()
-          const dims = fitAddon.proposeDimensions()
-          if (dims) sendResize(dims.cols, dims.rows)
-        }
+        requestAnimationFrame(sendResize)
+
+        const handleResize = () => sendResize()
+        resizeHandler = handleResize
+        window.addEventListener('resize', handleResize)
+
+        term.onData((data: string) => {
+          if (ws && ws.readyState === ws.OPEN) {
+            ws.send(JSON.stringify({ action: 'input', data }))
+          }
+        })
+
+        term.focus()
       }
 
-      resizeHandler = handleResize
-      window.addEventListener('resize', handleResize)
+      ws.onmessage = (event) => {
+        try {
+          const msg = JSON.parse(event.data)
+          if (msg.type === 'output' && termRef.current) {
+            termRef.current.write(msg.data)
+          }
+        } catch {}
+      }
 
-      term.onData((data: string) => sendInput(data))
-
-      termRef.current = term
-      pollRef.current = setInterval(pollOutput, POLL_INTERVAL)
-
-      setTimeout(() => {
-        if (fitAddon) {
-          fitAddon.fit()
-          const dims = fitAddon.proposeDimensions()
-          if (dims) sendResize(dims.cols, dims.rows)
+      ws.onclose = () => {
+        if (termRef.current) {
+          termRef.current.dispose()
+          termRef.current = null
         }
-      }, 100)
-
-      term.focus()
+      }
     }
 
     init()
 
     return () => {
       mounted = false
-      if (resizeHandler) window.removeEventListener('resize', resizeHandler)
-      if (pollRef.current) clearInterval(pollRef.current)
+      if (resizeHandler) {
+        window.removeEventListener('resize', resizeHandler)
+      }
       if (termRef.current) {
         termRef.current.dispose()
         termRef.current = null
       }
+      if (ws && (ws.readyState === ws.OPEN || ws.readyState === ws.CONNECTING)) {
+        ws.close()
+      }
     }
-  }, [connect, sendInput, pollOutput, sendResize])
+  }, [sessionId])
 
   return <div ref={terminalRef} className="h-full w-full" />
 }

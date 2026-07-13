@@ -17,4 +17,9 @@ if [ -S /var/run/docker.sock ]; then
   fi
 fi
 
+su-exec axius node /app/dist/ws-server.js &
+WS_PID=$!
+
+trap 'kill $WS_PID 2>/dev/null; exit' SIGTERM SIGINT
+
 exec su-exec axius "$@"
