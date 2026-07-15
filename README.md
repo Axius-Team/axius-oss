@@ -1,7 +1,7 @@
 <table border="0">
   <tr>
     <td>
-      <img width="80" height="80" alt="axius-ico" src="https://github.com/user-attachments/assets/f1917052-9911-42d2-934c-70235a062767" />
+      <img width="80" height="80" alt="axius-ico" src="https://i.imgur.com/LkZ3BJk.png" />
     </td>
     <td>
       <h1>Axius OSS</h1>
@@ -11,7 +11,7 @@
 
 > Self-hosted server management dashboard for developers. No cloud. No telemetry. No surprises.
 
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![License](https://img.shields.io/badge/license-elv2-orange.svg)](LICENSE)
 [![Status](https://img.shields.io/badge/status-stable-green.svg)]()
 [![Stack](https://img.shields.io/badge/stack-Next.js%2015%20%2B%20TypeScript-blue.svg)]()
 
@@ -222,7 +222,7 @@ This is explicit and intentional:
 
 ## License
 
-CC-BY-NC-4.0 — see [LICENSE](LICENSE) for details.
+Elastic License 2.0 . see [LICENSE](LICENSE) for details.
 
 ---
 
