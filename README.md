@@ -229,7 +229,7 @@ Elastic License 2.0 . see [LICENSE](LICENSE) for details.
 <table border="0" width="100%">
   <tr>
     <td align="center" style="padding: 32px 0 16px 0;">
-      <img width="40" height="40" alt="axius-ico" src="https://github.com/user-attachments/assets/f1917052-9911-42d2-934c-70235a062767" />
+      <img width="40" height="40" alt="axius-ico" src="https://i.imgur.com/LkZ3BJk.png" />
       <h3>Need more?</h3>
       <p>Axius OSS is free and always will be. For multi-server management and more, see <strong><a href="https://axius.pro">Axius Pro</a></strong>.</p>
     </td>
