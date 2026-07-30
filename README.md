@@ -27,20 +27,20 @@ There are no cloud dependencies, no third-party services, and no data leaving yo
 
 ## Core principles
 
-**No external dependencies** — Axius OSS runs entirely on your infrastructure. There is no telemetry, no analytics endpoint, no license check, and no connection to any external service unless you explicitly configure SMTP notifications.
+**No external dependencies**: Axius OSS runs entirely on your infrastructure. There is no telemetry, no analytics endpoint, no license check, and no connection to any external service unless you explicitly configure SMTP notifications.
 
-**You own your data** — all state lives in a single SQLite file at a path you control. Back it up, move it, inspect it directly. No hidden state.
+**You own your data**: all state lives in a single SQLite file at a path you control. Back it up, move it, inspect it directly. No hidden state.
 
-**Zero configuration** — the setup wizard handles first-run configuration through a browser UI. There is nothing to configure before the first `docker compose up`.
+**Zero configuration**: the setup wizard handles first-run configuration through a browser UI. There is nothing to configure before the first `docker compose up`.
 
-**Single-user by design** — Axius OSS is built for the person who owns the server. One admin account with full access to all features, secured by bcrypt and JWT.
+**Single-user by design**: Axius OSS is built for the person who owns the server. One admin account with full access to all features, secured by bcrypt and JWT.
 
 ---
 
 ## Features
 
-- Real-time system monitoring — CPU, memory, storage, network, uptime
-- Docker container management — start, stop, restart, remove
+- Real-time system monitoring: CPU, memory, storage, network, uptime
+- Docker container management: start, stop, restart, remove
 - File explorer with syntax highlighting
 - Web terminal with multiple tabbed sessions
 - Email notifications for container stop events via SMTP
@@ -55,15 +55,15 @@ There are no cloud dependencies, no third-party services, and no data leaving yo
 
 ## Screenshots
 
-**System monitoring** — real-time CPU, memory, storage, and network charts.
+**System monitoring**: real-time CPU, memory, storage, and network charts.
 
 <img width="1872" height="1014" alt="image" src="https://github.com/user-attachments/assets/fb1214aa-85ae-4957-b47b-2878df9416ad" />
 
-**File explorer** — browse the host filesystem with syntax-highlighted editing.
+**File explorer**: browse the host filesystem with syntax-highlighted editing.
 
 <img width="1868" height="1015" alt="image" src="https://github.com/user-attachments/assets/97392419-c3c5-463a-9d60-e28e55b8abd7" />
 
-**Email notifications** — configure SMTP and receive alerts when a container stops.
+**Email notifications**: configure SMTP and receive alerts when a container stops.
 
 <img width="1852" height="1021" alt="image" src="https://github.com/user-attachments/assets/b37a865a-36cc-4a8c-9ad5-17744314ce02" />
 
@@ -119,10 +119,10 @@ npm run dev
 
 The first time you open `http://localhost:8765`, you are guided through a four-step wizard:
 
-1. **Welcome** — overview of features and data privacy
-2. **Create admin** — set your username and password
-3. **SMTP** (optional) — configure email notifications for container events
-4. **Done** — complete setup and log in
+1. **Welcome**: overview of features and data privacy
+2. **Create admin**: set your username and password
+3. **SMTP** (optional): configure email notifications for container events
+4. **Done**: complete setup and log in
 
 ---
 
@@ -171,7 +171,7 @@ The theme applies immediately without a page reload.
 **What you need to be aware of:**
 - The web terminal spawns a PTY as the same OS user running the Node.js process. If Node runs as root, the terminal runs as root.
 - Docker socket access gives significant host access. Use the optional socket proxy in production environments.
-- The Docker Compose setup mounts the host filesystem at `/mnt/host`, giving the file explorer full read/write access. Do not expose Axius OSS to untrusted networks without additional controls — a VPN, firewall rule, or reverse proxy with authentication in front of it.
+- The Docker Compose setup mounts the host filesystem at `/mnt/host`, giving the file explorer full read/write access. Do not expose Axius OSS to untrusted networks without additional controls: a VPN, firewall rule, or reverse proxy with authentication in front of it.
 - This is a single-user system. The admin account has full access to everything.
 
 ---
@@ -180,15 +180,15 @@ The theme applies immediately without a page reload.
 
 Axius OSS follows Atomic Design principles.
 
-**Atoms** — stateless primitives: `ThemeToggle`, `StatusDot`, `MetricBadge`, `CopyButton`, `LoadingSpinner`
+**Atoms**: stateless primitives: `ThemeToggle`, `StatusDot`, `MetricBadge`, `CopyButton`, `LoadingSpinner`
 
-**Molecules** — composed atoms with simple local state: `MetricCard`, `NavItem`, `ContainerRow`, `FileRow`, `NotificationToggle`, `SmtpStatusBanner`
+**Molecules**: composed atoms with simple local state: `MetricCard`, `NavItem`, `ContainerRow`, `FileRow`, `NotificationToggle`, `SmtpStatusBanner`
 
-**Organisms** — feature sections with business logic: `Sidebar`, `MonitoringDashboard`, `DockerManagement`, `FileExplorer`, `TerminalTabManager`, `SettingsPanel`, `NotificationSettings`, `ThemeEditor`
+**Organisms**: feature sections with business logic: `Sidebar`, `MonitoringDashboard`, `DockerManagement`, `FileExplorer`, `TerminalTabManager`, `SettingsPanel`, `NotificationSettings`, `ThemeEditor`
 
-**Templates** — page-level layout shells: `DashboardShell`, `AuthShell`, `SetupShell`
+**Templates**: page-level layout shells: `DashboardShell`, `AuthShell`, `SetupShell`
 
-**Pages** — Next.js App Router pages that compose templates and organisms
+**Pages**: Next.js App Router pages that compose templates and organisms
 
 ---
 
