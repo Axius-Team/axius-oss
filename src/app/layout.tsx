@@ -9,7 +9,7 @@ const inter = Inter({ subsets: ['latin'] })
 export const metadata: Metadata = {
   title: 'Axius OSS',
   description: 'Self-hosted server monitoring for developers',
-  icons: { icon: '/axius.ico', apple: '/apple-icon.png' },
+  icons: { icon: '/axius.ico', apple: '/axius.ico' },
   manifest: '/manifest.json',
 }
 
@@ -23,7 +23,7 @@ export default function RootLayout({
   try {
     customCss = getSetting('custom_css') || ''
     themeMode = getSetting('theme_mode') || 'dark'
-  } catch {}
+  } catch { }
   const sanitized = customCss ? sanitizeCss(customCss) : ''
 
   return (
