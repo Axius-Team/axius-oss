@@ -81,7 +81,7 @@ There are no cloud dependencies, no third-party services, and no data leaving yo
 
 **Linux:**
 ```bash
-git clone https://github.com/Lucas-Henry/axius-oss.git
+git clone https://github.com/Axius-Team/axius-oss.git
 cd axius-oss
 cp .env.example .env.local
 sed -i "s|ENCRYPTION_KEY=|ENCRYPTION_KEY=$(openssl rand -hex 32)|" .env.local
@@ -91,7 +91,7 @@ docker compose up -d
 
 **macOS:**
 ```bash
-git clone https://github.com/Lucas-Henry/axius-oss.git
+git clone https://github.com/Axius-Team/axius-oss.git
 cd axius-oss
 cp .env.example .env.local
 sed -i '' "s|ENCRYPTION_KEY=|ENCRYPTION_KEY=$(openssl rand -hex 32)|" .env.local
@@ -104,7 +104,7 @@ Open `http://localhost:8765` and follow the setup wizard.
 ### Running without Docker
 
 ```bash
-git clone https://github.com/Lucas-Henry/axius-oss.git
+git clone https://github.com/Axius-Team/axius-oss.git
 cd axius-oss
 cp .env.example .env.local
 sed -i "s|ENCRYPTION_KEY=|ENCRYPTION_KEY=$(openssl rand -hex 32)|" .env.local
